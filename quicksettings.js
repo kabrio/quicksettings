@@ -96,6 +96,7 @@
 
         _panel: null,
         _titleBar: null,
+        _niceTitles: true,
         _content: null,
         _startX: 0,
         _startY: 0,
@@ -655,6 +656,24 @@
             }
             return this;
         },
+
+        enableNiceTitles: function (bool) {
+            if (bool == true) this._niceTitles = true;
+            else if (bool == false) this._niceTitles = false;
+        },
+
+        //helper function to split camelCase to camel case
+        splitTitle: function(title) {
+            var newTitle = "";
+            //https://stackoverflow.com/questions/18379254/regex-to-split-camel-case#18379358
+            var words = title.split(/(?=[A-Z])/);
+            for (var j = 0; j < words.length; j++) {
+              newTitle = newTitle + words[j].toLowerCase();
+              if (j != words.length) newTitle += " ";
+            }
+            console.log(newTitle);
+            return newTitle;
+        },
         // endregion
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -942,7 +961,10 @@
         addDropDown: function (title, items, callback) {
             var container = this._createContainer();
 
-            var label = createLabel("<b>" + title + "</b>", container);
+            if (this._niceTitles) _title = this.splitTitle(title);
+            else _title = title;
+
+            var label = createLabel("<b>" + _title + "</b>", container);
             var select = createElement("select", null, "qs_select", container);
             for (var i = 0; i < items.length; i++) {
                 var option = createElement("option"),
@@ -1212,8 +1234,8 @@
             input.step = step || 1;
             input.value = value || 0;
 
-            label.innerHTML = "<b>" + title + ":</b> " + input.value;
-
+            if (this._niceTitles) label.innerHTML = "<b>" + this.splitTitle(title) + ":</b> " + input.value;
+            else label.innerHTML = "<b>" + title + ":</b> " + input.value;            
 
             this._controls[title] = {
                 container: container,
